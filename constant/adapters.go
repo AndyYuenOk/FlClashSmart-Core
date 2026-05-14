@@ -48,6 +48,8 @@ const (
 	Sudoku
 	Masque
 	TrustTunnel
+	OpenVPN
+	Tailscale
 )
 
 const (
@@ -55,9 +57,9 @@ const (
 	DefaultUDPTimeout = dialer.DefaultUDPTimeout
 	DefaultDropTime   = 12 * DefaultTCPTimeout
 	DefaultTLSTimeout = DefaultTCPTimeout
+	DefaultTestURL    = "https://www.gstatic.com/generate_204"
 )
 
-var DefaultTestURL = "https://www.gstatic.com/generate_204"
 var ErrNotSupport = errors.New("no support")
 
 type Connection interface {
@@ -221,6 +223,10 @@ func (at AdapterType) String() string {
 		return "Masque"
 	case TrustTunnel:
 		return "TrustTunnel"
+	case OpenVPN:
+		return "OpenVPN"
+	case Tailscale:
+		return "Tailscale"
 	case Relay:
 		return "Relay"
 	case Selector:

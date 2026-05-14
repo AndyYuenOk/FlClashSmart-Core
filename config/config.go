@@ -918,8 +918,6 @@ func parseProxies(cfg *RawConfig) (proxies map[string]C.Proxy, providersMap map[
 		proxyList = append(proxyList, groupName)
 	}
 
-	setProxyNameList(proxyList)
-
 	// check if any loop exists and sort the ProxyGroups
 	if err := proxyGroupsDagSort(groupsConfig); err != nil {
 		return nil, nil, err
@@ -1236,6 +1234,12 @@ func parseNameServer(servers []string, respectRules bool, preferH3 bool) ([]dns.
 			dnsNetType = "quic" // DNS over QUIC
 		case "system":
 			dnsNetType = "system" // System DNS
+		case "ts", "tailscale":
+			addr = u.Host
+			dnsNetType = "tailscale" // Tailscale DNS via proxy name
+			if addr == "" {
+				err = errors.New("missing Tailscale proxy name")
+			}
 		case "dhcp":
 			addr = server[len("dhcp://"):] // some special notation cannot be parsed by url
 			dnsNetType = "dhcp"            // UDP from DHCP
