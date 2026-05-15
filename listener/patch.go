@@ -1,8 +1,7 @@
 package listener
 
-// StopListener provides FlClash compatibility by shutting down all managed
-// inbound listeners in one call.
 func StopListener() {
+
 	if socksListener != nil {
 		_ = socksListener.Close()
 		socksListener = nil
@@ -58,6 +57,11 @@ func StopListener() {
 		shadowSocksListener = nil
 	}
 
+	if shadowSocksListener != nil {
+		_ = shadowSocksListener.Close()
+		shadowSocksListener = nil
+	}
+
 	if vmessListener != nil {
 		_ = vmessListener.Close()
 		vmessListener = nil
@@ -66,26 +70,5 @@ func StopListener() {
 	if tuicListener != nil {
 		_ = tuicListener.Close()
 		tuicListener = nil
-	}
-
-	for key, l := range tunnelTCPListeners {
-		if l != nil {
-			_ = l.Close()
-		}
-		delete(tunnelTCPListeners, key)
-	}
-
-	for key, l := range tunnelUDPListeners {
-		if l != nil {
-			_ = l.Close()
-		}
-		delete(tunnelUDPListeners, key)
-	}
-
-	for key, l := range inboundListeners {
-		if l != nil {
-			_ = l.Close()
-		}
-		delete(inboundListeners, key)
 	}
 }

@@ -1,24 +1,20 @@
 package config
 
-import (
-	"sync"
-)
+import "sync"
 
 var (
-	proxyNameListMu sync.RWMutex
 	proxyNameList   []string
+	proxyNameListMu sync.RWMutex
 )
-
-func setProxyNameList(names []string) {
-	proxyNameListMu.Lock()
-	defer proxyNameListMu.Unlock()
-	proxyNameList = append(proxyNameList[:0], names...)
-}
 
 func GetProxyNameList() []string {
 	proxyNameListMu.RLock()
 	defer proxyNameListMu.RUnlock()
-	out := make([]string, len(proxyNameList))
-	copy(out, proxyNameList)
-	return out
+	return proxyNameList
+}
+
+func SetProxyNameList(list []string) {
+	proxyNameListMu.Lock()
+	defer proxyNameListMu.Unlock()
+	proxyNameList = list
 }
