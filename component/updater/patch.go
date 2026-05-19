@@ -2,7 +2,6 @@ package updater
 
 import (
 	"fmt"
-
 	"github.com/metacubex/mihomo/component/geodata"
 	"github.com/metacubex/mihomo/component/mmdb"
 	"github.com/oschwald/maxminddb-golang"

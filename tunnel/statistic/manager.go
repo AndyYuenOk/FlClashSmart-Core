@@ -70,16 +70,20 @@ func (m *Manager) Range(f func(c Tracker) bool) {
 	})
 }
 
-func (m *Manager) PushUploaded(size int64) {
-	m.proxyUploadTemp.Add(size)
-	m.proxyUploadTotal.Add(size)
+func (m *Manager) PushUploaded(lastChain string, size int64) {
+	if lastChain != "DIRECT" {
+		m.proxyUploadTemp.Add(size)
+		m.proxyUploadTotal.Add(size)
+	}
 	m.uploadTemp.Add(size)
 	m.uploadTotal.Add(size)
 }
 
-func (m *Manager) PushDownloaded(size int64) {
-	m.proxyDownloadTemp.Add(size)
-	m.proxyDownloadTotal.Add(size)
+func (m *Manager) PushDownloaded(lastChain string, size int64) {
+	if lastChain != "DIRECT" {
+		m.proxyDownloadTemp.Add(size)
+		m.proxyDownloadTotal.Add(size)
+	}
 	m.downloadTemp.Add(size)
 	m.downloadTotal.Add(size)
 }
@@ -133,6 +137,7 @@ func (m *Manager) ResetStatistic() {
 	m.proxyDownloadTemp.Store(0)
 	m.proxyDownloadBlip.Store(0)
 	m.proxyDownloadTotal.Store(0)
+
 }
 
 func (m *Manager) handle() {
