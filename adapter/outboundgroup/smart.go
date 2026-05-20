@@ -290,6 +290,10 @@ func (s *Smart) DialContext(ctx context.Context, metadata *C.Metadata) (C.Conn, 
 			}
 		}
 
+		if len(proxies) == 1 {
+			s.store.DeleteUnwrapResult(s.Name(), s.configName, metadata.SmartTarget, asnNumber, metadata.NetWork == C.UDP)
+		}
+
 		return nil, finalErr
 	}
 
@@ -668,12 +672,9 @@ func (s *Smart) InitSmart() {
 	s.startTimedTask(10*time.Minute, cleanupInterval, "Group old records clean up", func() {
 		s.store.CleanupOldRecords(s.Name(), s.configName)
 	}, false)
-	s.startTimedTask(5*time.Second, checkInterval, "Init LGBM Collector", func() {
-		// load after tunnel.Running because size option ready later than group init
-		if s.collectData {
-			s.dataCollector = lightgbm.GetCollector()
-		}
-	}, true)
+	if s.collectData {
+		s.dataCollector = lightgbm.GetCollector()
+	}
 
 	if s.useLightGBM {
 		s.weightModel = lightgbm.GetModel()
@@ -1603,7 +1604,7 @@ func (s *Smart) checkHostStatus() {
 			status, okRes, err := s.StatusTest(p, host)
 			if err == nil && okRes {
 				s.store.UpdateHostStatus(s.Name(), s.configName, host, nodeName, s.maxFailedTimes, false, true, 0)
-				log.Debugln("[Smart] Recover node for host: node: [%s] - host: [%s] - status: [%d]", nodeName, host, status)
+				log.Debugln("[Smart] Recover Group: [%s] - Node: [%s] for Host: [%s] - Status: [%d]", s.Name(), nodeName, host, status)
 			}
 		}
 	}
